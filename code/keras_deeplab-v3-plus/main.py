@@ -201,7 +201,7 @@ if __name__ == '__main__':
     # parallel_model = multi_gpu_utils(model, gpus=1)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, 'acc', 'mse'])
     model.summary()
-    model.fit(X_train, Y_train, validation_split=.2, batch_size=1, epochs=1, callbacks=callbacks_list)
+    model.fit(X_train, Y_train, validation_split=.2, batch_size=320, epochs=30, callbacks=callbacks_list)
 
     #################################
     #########Testing Part############
