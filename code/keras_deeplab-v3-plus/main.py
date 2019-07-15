@@ -128,14 +128,14 @@ if __name__ == '__main__':
     # Load Full Dataset
     train_glob = '../../data/dicom/dicom-images-train/*/*/*.dcm'
     test_glob = '../../data/dicom/dicom-images-test/*/*/*.dcm'
-    train_fns = sorted(glob.glob(train_glob))[:5000]
-    test_fns = sorted(glob.glob(test_glob))[:5000]
+    train_fns = sorted(glob.glob(train_glob))
+    test_fns = sorted(glob.glob(test_glob))
     # for file_path in train_fns:
     #     dataset = pydicom.dcmread(file_path)
     #     show_dcm_info(dataset)
     #     plot_pixel_array(dataset)
     #     break  # Comment this out to see all
-    df_full = pd.read_csv('../dicom_data/train-rle.csv', index_col='ImageId')
+    df_full = pd.read_csv('../../data/dicom/train-rle.csv', index_col='ImageId')
     # Get train images and masks
     X_train = np.zeros((len(train_fns), im_height, im_width, im_chan), dtype=np.uint8)
     Y_train = np.zeros((len(train_fns), im_height, im_width, im_chan), dtype=np.bool)
