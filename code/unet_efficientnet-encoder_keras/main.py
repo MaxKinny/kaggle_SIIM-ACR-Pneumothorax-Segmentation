@@ -444,10 +444,16 @@ if __name__ == '__main__':
     # move splitted files
     file1 = glob.glob(train_im_path+'/*.png')
     file2 = glob.glob(train_mask_path+'/*.png')
+    file3 = glob.glob(val_mask_path + '/*.png')
+    file4 = glob.glob(val_im_path + '/*.png')
     [os.remove(fp) for fp in file1]
     [os.remove(fp) for fp in file2]
+    [os.remove(fp) for fp in file3]
+    [os.remove(fp) for fp in file4]
     [shutil.copy(fp, train_im_path+'/') for fp in train_fn]
     [shutil.copy(fp, train_mask_path+'/') for fp in masks_train_fn]
+    [shutil.copy(fp, val_mask_path+'/') for fp in masks_val_fn]
+    [shutil.copy(fp, val_im_path+'/') for fp in val_fn]
 
     # Train Set Images with Masks
     # a = DataGenerator(batch_size=64, shuffle=False, train_im_path=train_im_path, train_mask_path=train_mask_path)
@@ -532,8 +538,10 @@ if __name__ == '__main__':
 
     # Predict the validation set to do a sanity check
     validation_generator = DataGenerator(train_im_path=valid_im_path,
-                                         train_mask_path=valid_mask_path, augmentations=AUGMENTATIONS_TEST,
-                                         img_size=img_size, shuffle=False)
+                                         train_mask_path=valid_mask_path,
+                                         augmentations=AUGMENTATIONS_TEST,
+                                         img_size=img_size,
+                                         shuffle=False)
     preds_valid = predict_result(model, validation_generator, img_size)
     valid_fn = glob.glob('./keras_mask_val/*')
     y_valid_ori = np.array([cv2.resize(np.array(Image.open(fn)), (img_size, img_size)) for fn in valid_fn])
@@ -617,7 +625,10 @@ if __name__ == '__main__':
     rles = []
     i, max_img = 1, 10
     plt.figure(figsize=(16, 4))
+    i = 0
     for p in tqdm_notebook(preds_test):
+        i += 1
+        print("*****", i)
         p = p.squeeze()
         im = cv2.resize(p, (1024, 1024))
         im = im > threshold_best
