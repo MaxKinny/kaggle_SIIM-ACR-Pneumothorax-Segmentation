@@ -18,3 +18,7 @@ code/pytorch-deeplab-xception-master_kaggle/
 code/retrain_keras-deeplab-v3\.1-plus/
 
 code/keras_deeplab-v3-plus/logs/deeplabv3P/
+
+code/keras_deeplab-v3-plus/submission\.csv
+
+code/keras_deeplab-v3-plus/vgg_face_deeplabv3P\.h5

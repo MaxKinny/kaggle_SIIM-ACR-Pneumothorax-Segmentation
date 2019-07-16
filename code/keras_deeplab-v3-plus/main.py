@@ -118,7 +118,7 @@ def Unet(im_chan):
 
 
 if __name__ == '__main__':
-    basestr = 'deeplabv3P'
+    basestr = 'Unet'
     im_height = 1024
     im_width = 1024
     im_chan = 1
@@ -182,12 +182,12 @@ if __name__ == '__main__':
     #################################
     #########Training Part###########
     #################################
-    file_path = "vgg_face_" + basestr + ".h5"
+    file_path = "keras_" + basestr + ".h5"
     # for saving the checkpoint
-    checkpoint = ModelCheckpoint(file_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    checkpoint = ModelCheckpoint(file_path, monitor=dice_coef, verbose=1, save_best_only=True, mode='max')
 
     # adaptively change the learning rate
-    reduce_on_plateau = ReduceLROnPlateau(monitor="val_acc", mode="max", factor=0.1, patience=20, verbose=1)
+    reduce_on_plateau = ReduceLROnPlateau(monitor=dice_coef, mode="max", factor=0.1, patience=20, verbose=1)
 
     tbCallBack = TensorBoard(log_dir='./logs/' + basestr,
                              histogram_freq=0,
@@ -199,9 +199,9 @@ if __name__ == '__main__':
     # model = Deeplabv3(weights=None, input_shape=(im_reshape_height, im_reshape_width, im_chan), classes=1)
     model = Unet(im_chan)
     # parallel_model = multi_gpu_utils(model, gpus=1)
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[dice_coef, 'acc', 'mse'])
+    model.compile(optimizer='adam', loss=dice_coef_loss, metrics=[dice_coef, 'acc', 'mse'])
     model.summary()
-    model.fit(X_train, Y_train, validation_split=.2, batch_size=320, epochs=30, callbacks=callbacks_list)
+    model.fit(X_train, Y_train, validation_split=.2, batch_size=1024, epochs=5, callbacks=callbacks_list)
 
     #################################
     #########Testing Part############
@@ -229,9 +229,11 @@ if __name__ == '__main__':
             img = np.expand_dims(img, axis=2)
             img = np.expand_dims(img, axis=0)
             pred = model.predict(img)
+            pred = pred[0, :, :, 0]
             print(img_path)
             print(np.unique(pred))
             mask = 255 * (pred > threshold).astype(np.uint8).T
+            print(np.unique(mask))
             if np.count_nonzero(mask) == 0:
                 rle = " -1"
             else:
@@ -243,7 +245,7 @@ if __name__ == '__main__':
 
     submission_df = pd.DataFrame(sublist, columns=sample_df.columns.values)
     submission_df.to_csv("submission.csv", index=False)
-    print('Counter: ', counter)
+    # print('Counter: ', counter)
     # # Generates labels using most basic setup.  Supports various image sizes.  Returns image labels in same format
     # # as original image.  Normalization matches MobileNetV2
     #
