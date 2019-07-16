@@ -22,3 +22,7 @@ code/keras_deeplab-v3-plus/logs/deeplabv3P/
 code/keras_deeplab-v3-plus/submission\.csv
 
 code/keras_deeplab-v3-plus/vgg_face_deeplabv3P\.h5
+
+code/unet_efficientnet-encoder_keras/venv/
+
+code/unet_efficientnet-encoder_keras/\.idea/
