@@ -9,7 +9,7 @@ import keras.backend as K
 from keras.losses import binary_crossentropy
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.layers import Input, Dense, MaxPooling2D, Conv2DTranspose, concatenate, Multiply, Dropout, Add, Conv2D, BatchNormalization, LeakyReLU
-from efficientnet import EfficientNetB6
+from efficientnet import EfficientNetB5 as EfficientNetBackbone
 from keras.models import Model
 import cv2
 from matplotlib import pyplot as plt
@@ -54,7 +54,7 @@ AUGMENTATIONS_TEST = Compose([
 
 
 def UEfficientNet(input_shape=(None, None, 3), dropout_rate=0.1):
-    backbone = EfficientNetB6(weights='imagenet',
+    backbone = EfficientNetBackbone(weights='imagenet',
                               include_top=False,
                               input_shape=input_shape)
     input = backbone.input
@@ -489,7 +489,7 @@ if __name__ == '__main__':
     K.clear_session()
     model = UEfficientNet(input_shape=(img_size, img_size, 3), dropout_rate=0.25)
     model.compile(loss=bce_dice_loss, optimizer='adam', metrics=[my_iou_metric])
-    epochs = 65
+    epochs = 60
     snapshot = SnapshotCallbackBuilder(nb_epochs=epochs, nb_snapshots=1, init_lr=1e-3)
     batch_size = 8
     swa = SWA('./keras_swa.model', 67)
