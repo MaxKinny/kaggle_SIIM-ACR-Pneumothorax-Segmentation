@@ -28,3 +28,5 @@ code/unet_efficientnet-encoder_keras/venv/
 code/unet_efficientnet-encoder_keras/\.idea/
 
 *.model
+
+venv/
