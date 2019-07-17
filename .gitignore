@@ -32,3 +32,5 @@ code/unet_efficientnet-encoder_keras/\.idea/
 venv/
 
 \.idea/
+
+code/__pycache__/
