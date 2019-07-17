@@ -9,7 +9,7 @@ import keras.backend as K
 from keras.losses import binary_crossentropy
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.layers import Input, Dense, MaxPooling2D, Conv2DTranspose, concatenate, Multiply, Dropout, Add, Conv2D, BatchNormalization, LeakyReLU
-from efficientnet import EfficientNetB4
+from efficientnet import EfficientNetB6
 from keras.models import Model
 import cv2
 from matplotlib import pyplot as plt
@@ -54,7 +54,7 @@ AUGMENTATIONS_TEST = Compose([
 
 
 def UEfficientNet(input_shape=(None, None, 3), dropout_rate=0.1):
-    backbone = EfficientNetB4(weights='imagenet',
+    backbone = EfficientNetB6(weights='imagenet',
                               include_top=False,
                               input_shape=input_shape)
     input = backbone.input
@@ -489,7 +489,7 @@ if __name__ == '__main__':
     K.clear_session()
     model = UEfficientNet(input_shape=(img_size, img_size, 3), dropout_rate=0.25)
     model.compile(loss=bce_dice_loss, optimizer='adam', metrics=[my_iou_metric])
-    epochs = 70
+    epochs = 65
     snapshot = SnapshotCallbackBuilder(nb_epochs=epochs, nb_snapshots=1, init_lr=1e-3)
     batch_size = 8
     swa = SWA('./keras_swa.model', 67)
@@ -558,7 +558,9 @@ if __name__ == '__main__':
                                          img_size=img_size, batch_size=64, shuffle=False)
 
     images, masks = validation_generator.__getitem__(0)
+    i = 0
     for i, (im, mask) in enumerate(zip(images, masks)):
+        print("**************", i)
         pred = preds_valid[i]
         ax = axs[int(i / grid_width), i % grid_width]
         ax.imshow(im[..., 0], cmap="bone")
