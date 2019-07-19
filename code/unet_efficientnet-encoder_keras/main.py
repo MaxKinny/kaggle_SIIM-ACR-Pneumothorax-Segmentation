@@ -20,8 +20,9 @@ import gc
 from tqdm import tqdm_notebook
 import sys
 sys.path.insert(0, '../')
+sys.path.insert(0, './Keras-NASNet-master/')
 from mask_functions import rle2mask, mask2rle
-import pdb
+from nasnet import NASNetLarge
 ##########Data Augmentation############################################
 from albumentations import (
     Compose, HorizontalFlip, CLAHE, HueSaturationValue,
@@ -54,9 +55,11 @@ AUGMENTATIONS_TEST = Compose([
 
 
 def UEfficientNet(input_shape=(None, None, 3), dropout_rate=0.1):
-    backbone = EfficientNetBackbone(weights='imagenet',
-                              include_top=False,
-                              input_shape=input_shape)
+    # backbone = EfficientNetBackbone(weights='imagenet',
+    #                           include_top=False,
+    #                           input_shape=input_shape)
+    backbone = NASNetLarge(input_shape=input_shape, dropout=dropout_rate, include_top=False)
+    backbone.summary()
     input = backbone.input
     start_neurons = 16
 
@@ -82,7 +85,7 @@ def UEfficientNet(input_shape=(None, None, 3), dropout_rate=0.1):
 
     deconv3 = Conv2DTranspose(start_neurons * 8, (3, 3), strides=(2, 2), padding="same")(uconv4)
     conv3 = backbone.layers[154].output
-    uconv3 = concatenate([deconv3, conv3])
+    uconv3 = concatenate([deconv3, conv3])  #report error!
     uconv3 = Dropout(dropout_rate)(uconv3)
 
     uconv3 = Conv2D(start_neurons * 8, (3, 3), activation=None, padding="same")(uconv3)
